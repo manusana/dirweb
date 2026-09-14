@@ -1,0 +1,46 @@
+<section id="inicio" class="intro" aria-label="SixFilms — dirección visual">
+	<img
+		class="intro-logo"
+		src="/sixfilms-background.jpg"
+		alt="SixFilms, 666 Gang"
+		width="1920"
+		height="1080"
+		loading="eager"
+		fetchpriority="high"
+		decoding="async"
+	/>
+	<div class="intro-flash" aria-hidden="true"></div>
+	<a class="intro-cue" href="#presentacion">
+		<span>Descubre SixFilms</span>
+		<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+			<path d="M12 4v16m-6-6 6 6 6-6" />
+		</svg>
+	</a>
+</section>
+
+<script is:inline>
+	(() => {
+		const intro = document.querySelector('.intro');
+		const logo = intro?.querySelector('img');
+		const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+		const isAtStart = () => window.scrollY < 32 && (!location.hash || location.hash === '#inicio');
+		if (!intro || !logo || reducedMotion.matches || !isAtStart()) return;
+
+		// Wait for the existing image to decode; never block navigation or scrolling.
+		intro.dataset.intro = 'loading';
+		logo.decode().then(() => {
+			if (reducedMotion.matches || !isAtStart()) {
+				delete intro.dataset.intro;
+				return;
+			}
+			intro.dataset.intro = 'playing';
+		}).catch(() => { delete intro.dataset.intro; });
+
+		const finish = (event) => {
+			if (event.animationName !== 'intro-cue') return;
+			delete intro.dataset.intro;
+			intro.removeEventListener('animationend', finish);
+		};
+		intro.addEventListener('animationend', finish);
+	})();
+</script>

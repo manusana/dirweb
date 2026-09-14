@@ -1,11 +1,226 @@
 ---
-import Welcome from '../components/Welcome.astro';
+import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
+import Intro from '../components/Intro.astro';
+import profilePhoto from '../assets/profile/dir-sixfilms-profile.jpeg';
+import mdaThumbnail from '../assets/videos/mda-moschino-marni.jpg';
+import akafreshThumbnail from '../assets/videos/akafresh-articuno.jpg';
+import seluThumbnail from '../assets/videos/selu-no-show-ice-spice.jpg';
+import caraperroThumbnail from '../assets/videos/caraperro-no-te-equivoques.jpg';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const videos = [
+	{
+		title: 'Moschino & Marni',
+		artist: 'Mda',
+		youtubeId: 'sTzRcqUehz8',
+		thumbnail: mdaThumbnail,
+	},
+	{
+		title: 'Articuno',
+		artist: 'akafresh',
+		youtubeId: '87u9FrR19a0',
+		thumbnail: akafreshThumbnail,
+	},
+	{
+		title: 'No Show / Ice Spice',
+		artist: 'Selu',
+		youtubeId: 's8ipxqURVTI',
+		thumbnail: seluThumbnail,
+	},
+	{
+		title: 'No te equivoques',
+		artist: 'Caraperro, Yung Naik',
+		youtubeId: 'TdWz_rM55i4',
+		thumbnail: caraperroThumbnail,
+	},
+];
+
+const covers = [
+	{ title: 'Portada 01', artist: 'Artist One', tone: 'bg-[#ded3c0]' },
+	{ title: 'Portada 02', artist: 'Artist Two', tone: 'bg-[#cfd6ce]' },
+	{ title: 'Portada 03', artist: 'Artist Three', tone: 'bg-[#e7d8cc]' },
+	{ title: 'Portada 04', artist: 'Artist Four', tone: 'bg-[#d8d5ca]' },
+];
+
+const products = [
+	{ name: 'Tee SixFilms', price: '32 EUR' },
+	{ name: 'Poster Frame 01', price: '18 EUR' },
+	{ name: 'Cap Logo', price: '26 EUR' },
+];
 ---
 
-<Layout>
-	<Welcome />
+<Layout
+	title="dir.sixFilms | Filmmaker & Cover Artist"
+	description="Portfolio luminoso y minimalista de dir.sixFilms: videoclips, portadas, merchandising y contacto para nuevos trabajos."
+>
+	<div class="relative z-10">
+		<Intro />
+		<section id="presentacion" class="mx-auto flex w-full max-w-7xl flex-col justify-center px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
+			<div data-reveal class="mb-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+				<div>
+					<p class="mb-6 max-w-sm font-mono text-sm text-[var(--muted-soft)]">Filmmaker y creador de portadas para artistas.</p>
+					<h1 class="max-w-5xl text-balance text-6xl font-semibold leading-none text-[var(--text)] sm:text-8xl lg:text-[9rem]">
+						dir.sixFilms
+					</h1>
+				</div>
+				<Image
+					src={profilePhoto}
+					alt="Foto de perfil de dir.sixFilms"
+					width={176}
+					height={176}
+					loading="lazy"
+					decoding="async"
+					class="size-32 shrink-0 rounded-full border border-[color:var(--border)] object-cover sm:size-40 lg:size-44"
+				/>
+			</div>
+			<div data-reveal class="mt-10 flex max-w-2xl flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+				<p class="text-pretty text-lg leading-8 text-[var(--muted)]">
+					Una direccion visual limpia, sensible y precisa para canciones que necesitan imagen antes de salir al mundo.
+				</p>
+				<a
+					href="#obras"
+					class="inline-flex h-12 shrink-0 items-center justify-center rounded-full bg-[var(--button-bg)] px-6 font-mono text-sm font-medium text-[var(--button-text)] transition duration-200 hover:scale-[1.03] hover:bg-[var(--button-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--text)] focus:ring-offset-2 focus:ring-offset-[var(--page-bg)] motion-reduce:hover:scale-100"
+				>
+					Ver obras
+				</a>
+			</div>
+		</section>
+
+		<section id="obras" class="deferred-section border-t border-[color:var(--border)] py-20 sm:py-28">
+			<div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+				<div data-reveal class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+					<div>
+						<p class="font-mono text-sm text-[var(--muted-soft)]">Obras seleccionadas</p>
+						<h2 class="mt-3 text-4xl font-medium text-[var(--text)] sm:text-6xl">Videoclips</h2>
+					</div>
+					<p class="max-w-md text-pretty text-[var(--muted)]">
+						Cada canción, una historia visual. Descubre los videoclips completos en YouTube.
+					</p>
+				</div>
+
+				<div class="horizontal-rail mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+					{
+						videos.map((video) => (
+							<article data-reveal class="group w-[82vw] shrink-0 snap-start sm:w-[34rem]">
+								<a
+									href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="block overflow-hidden rounded-[2rem] bg-[var(--surface)] p-2 ring-1 ring-[color:var(--border)] transition-colors duration-200 hover:bg-[var(--surface-strong)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--text)]"
+									aria-label={`Ver ${video.title} de ${video.artist} en YouTube (se abre en una pestaña nueva)`}
+								>
+									<div class="relative aspect-video overflow-hidden rounded-[1.55rem] bg-black">
+										<Image
+											src={video.thumbnail}
+											alt=""
+											width={640}
+											height={360}
+											widths={[400, 640, 1080].filter((width) => width <= video.thumbnail.width)}
+											sizes="(min-width: 640px) 528px, calc(82vw - 16px)"
+											format="webp"
+											loading="lazy"
+											decoding="async"
+											class="size-full object-cover transition-transform duration-500 group-hover:scale-[1.03] motion-reduce:transform-none"
+										/>
+										<span class="absolute inset-0 grid place-items-center" aria-hidden="true">
+											<span class="grid size-14 place-items-center rounded-full bg-black/65 text-white ring-1 ring-white/30 transition-transform duration-200 group-hover:scale-[1.05] motion-reduce:group-hover:scale-100">
+												<svg class="size-5 translate-x-0.5" viewBox="0 0 24 24" fill="currentColor">
+													<path d="M7 4.5v15l12-7.5Z" />
+												</svg>
+											</span>
+										</span>
+									</div>
+									<div class="flex items-center justify-between gap-3 px-3 py-4">
+										<div class="min-w-0">
+											<h3 class="text-xl font-medium text-[var(--text)]">{video.title}</h3>
+											<p class="mt-1 text-sm text-[var(--muted-soft)]">{video.artist}</p>
+										</div>
+										<span class="shrink-0 rounded-full border border-[color:var(--border-strong)] px-3 py-1 font-mono text-xs text-[var(--muted)] transition-colors duration-200 group-hover:bg-[var(--button-bg)] group-hover:text-[var(--button-text)]">
+											YouTube ↗
+										</span>
+									</div>
+								</a>
+							</article>
+						))
+					}
+				</div>
+
+				<div data-reveal class="mt-16 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+					<div>
+						<p class="font-mono text-sm text-[var(--muted-soft)]">Direccion visual</p>
+						<h2 class="mt-3 text-4xl font-medium text-[var(--text)] sm:text-6xl">Portadas</h2>
+					</div>
+					<p class="max-w-md text-pretty text-[var(--muted)]">
+						Estructura horizontal preparada para sustituir estos bloques por imagenes locales optimizadas con Astro.
+					</p>
+				</div>
+
+				<div class="horizontal-rail mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+					{
+						covers.map((cover) => (
+							<article data-reveal class="min-w-[72vw] snap-start sm:min-w-[24rem]">
+								<div class={`aspect-square rounded-[2rem] p-4 ring-1 ring-[color:var(--border)] ${cover.tone}`}>
+									<div class="flex h-full flex-col justify-between rounded-[1.55rem] border border-[color:var(--border)] p-5">
+										<span class="font-mono text-sm text-[var(--muted-soft)]">{cover.artist}</span>
+										<div>
+											<h3 class="text-3xl font-medium text-[var(--text)]">{cover.title}</h3>
+											<p class="mt-2 text-sm text-[var(--muted)]">Cover artwork</p>
+										</div>
+									</div>
+								</div>
+							</article>
+						))
+					}
+				</div>
+			</div>
+		</section>
+
+		<section id="merchandising" class="deferred-section border-t border-[color:var(--border)] bg-[var(--page-soft)] py-20 sm:py-28">
+			<div class="mx-auto grid w-full max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
+				<div data-reveal>
+					<p class="font-mono text-sm text-[var(--muted-soft)]">Merchandising</p>
+					<h2 class="mt-3 text-4xl font-medium text-[var(--text)] sm:text-6xl">Escaparate</h2>
+				</div>
+				<div class="grid gap-3 sm:grid-cols-3">
+					{
+						products.map((product) => (
+							<article data-reveal class="rounded-[2rem] bg-[var(--surface)] p-4 ring-1 ring-[color:var(--border)]">
+								<div class="aspect-[4/5] rounded-[1.5rem] bg-[var(--surface)]"></div>
+								<h3 class="mt-4 text-lg font-medium text-[var(--text)]">{product.name}</h3>
+								<p class="mt-1 text-sm text-[var(--muted-soft)]">{product.price}</p>
+								<button class="mt-5 h-10 w-full rounded-full border border-[color:var(--border-strong)] font-mono text-sm text-[var(--muted)] transition duration-200 hover:scale-[1.02] hover:bg-[var(--button-bg)] hover:text-[var(--button-text)] motion-reduce:hover:scale-100">
+									Reservar
+								</button>
+							</article>
+						))
+					}
+				</div>
+			</div>
+		</section>
+
+		<section id="contacto" class="deferred-section border-t border-[color:var(--border)] py-20 sm:py-28">
+			<div class="mx-auto grid w-full max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1fr] lg:px-8">
+				<div data-reveal>
+					<p class="font-mono text-sm text-[var(--muted-soft)]">Contacto</p>
+					<h2 class="mt-3 text-4xl font-medium text-[var(--text)] sm:text-6xl">Nuevo trabajo</h2>
+					<p class="mt-6 max-w-md text-pretty text-lg leading-8 text-[var(--muted)]">
+						Para videoclips, portadas, campanas visuales o lanzamientos completos.
+					</p>
+				</div>
+
+				<form data-reveal class="grid gap-3">
+					<input class="h-12 rounded-full border border-[color:var(--border)] bg-[var(--surface)] px-5 text-[var(--text)] outline-none transition-colors placeholder:text-[var(--muted-soft)] focus:border-[color:var(--border-strong)]" type="text" name="name" placeholder="Nombre" />
+					<input class="h-12 rounded-full border border-[color:var(--border)] bg-[var(--surface)] px-5 text-[var(--text)] outline-none transition-colors placeholder:text-[var(--muted-soft)] focus:border-[color:var(--border-strong)]" type="email" name="email" placeholder="Email" />
+					<textarea class="min-h-36 rounded-[1.5rem] border border-[color:var(--border)] bg-[var(--surface)] px-5 py-4 text-[var(--text)] outline-none transition-colors placeholder:text-[var(--muted-soft)] focus:border-[color:var(--border-strong)]" name="message" placeholder="Cuéntame la idea"></textarea>
+					<button class="h-12 rounded-full bg-[var(--button-bg)] px-6 font-mono text-sm font-medium text-[var(--button-text)] transition duration-200 hover:scale-[1.02] hover:bg-[var(--button-hover)] motion-reduce:hover:scale-100" type="submit">
+						Enviar
+					</button>
+				</form>
+			</div>
+		</section>
+	</div>
 </Layout>
+
+<script>
+	import '../scripts/reveal';
+</script>
