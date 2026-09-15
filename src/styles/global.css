@@ -26,7 +26,6 @@
 	--button-hover: #292524;
 	--button-text: #f4f0e8;
 	--background-overlay: rgba(244, 240, 232, 0.82);
-	--mesh-veil: rgba(255, 244, 251, 0.76);
 	color-scheme: light;
 }
 
@@ -44,7 +43,6 @@
 	--button-hover: #e8dfd1;
 	--button-text: #11100e;
 	--background-overlay: rgba(17, 16, 14, 0.6);
-	--mesh-veil: rgba(5, 3, 5, 0.48);
 	color-scheme: dark;
 }
 
@@ -65,6 +63,10 @@ body {
 
 .site-background {
 	--mesh-progress: 0;
+	--brand-opacity: 1;
+	--dissolve-opacity: 0;
+	--dissolve-scale-x: 1;
+	--dissolve-scale-y: 1;
 	position: fixed;
 	inset: 0;
 	/* Keep the image stable as mobile browser controls expand or collapse. */
@@ -78,6 +80,40 @@ body {
 .site-content {
 	position: relative;
 	z-index: 1;
+}
+
+/* Keep the content readable as the black intro opens into pale pink and white. */
+:root[data-cloud-tone="dark"] .site-content :is(main, footer) {
+	--text: #fcf8fb;
+	--muted: #f1e5ed;
+	--muted-soft: #e8d8e3;
+	--surface: rgba(255, 255, 255, 0.08);
+	--surface-strong: rgba(255, 255, 255, 0.15);
+	--border: rgba(255, 255, 255, 0.14);
+	--border-strong: rgba(255, 255, 255, 0.24);
+	--button-bg: #fff5fb;
+	--button-hover: #f5d9ec;
+	--button-text: #251520;
+	color: var(--text);
+}
+
+:root[data-cloud-tone="light"] .site-content :is(main, footer) {
+	--text: #251520;
+	--muted: #4e3746;
+	--muted-soft: #604656;
+	--page-bg: #f7deee;
+	--surface: rgba(255, 248, 253, 0.48);
+	--surface-strong: rgba(255, 248, 253, 0.74);
+	--border: rgba(48, 24, 40, 0.14);
+	--border-strong: rgba(48, 24, 40, 0.24);
+	--button-bg: #2a1724;
+	--button-hover: #4b2940;
+	--button-text: #fff5fb;
+	color: var(--text);
+}
+
+#presentacion :is(h1, p) {
+	transition: color 180ms ease;
 }
 
 .site-background::after {
@@ -94,13 +130,51 @@ body {
 }
 
 .background-brand,
+.background-dissolve,
 .background-mesh {
 	position: absolute;
 	inset: 0;
 }
 
 .background-brand {
-	opacity: calc(1 - var(--mesh-progress));
+	opacity: var(--brand-opacity);
+}
+
+.background-dissolve {
+	isolation: isolate;
+	opacity: var(--dissolve-opacity);
+	transform: scale(var(--dissolve-scale-x), var(--dissolve-scale-y));
+}
+
+.dissolve-frame {
+	position: absolute;
+	inset: 0;
+	opacity: 0;
+	visibility: hidden;
+}
+
+.dissolve-frame[data-active] {
+	visibility: visible;
+}
+
+.site-background[data-mesh-phase="mesh"] .background-brand {
+	visibility: hidden;
+}
+
+.site-background[data-mesh-phase="dissolving"] .background-dissolve {
+	will-change: transform, opacity;
+}
+
+.site-background[data-mesh-phase="dissolving"] .dissolve-frame[data-active] {
+	/* Preserve brightness between transparent frames instead of darkening each blend. */
+	mix-blend-mode: plus-lighter;
+	will-change: opacity;
+}
+
+.site-background[data-logo-dissolve-ready] .mesh-clouds {
+	/* A translucent second volume moves independently over the dissolved logo. */
+	background-color: transparent;
+	opacity: 0.52;
 }
 
 .background-mesh {
@@ -110,23 +184,15 @@ body {
 
 .mesh-clouds {
 	position: absolute;
-	inset: -8%;
+	inset: -14%;
 	/* Paint the gradients once; gently move their layer without animating blur or colors. */
-	background:
-		radial-gradient(ellipse at 49% 52%, rgba(3, 2, 3, 0.98) 0%, rgba(3, 2, 3, 0.8) 16%, transparent 52%),
-		radial-gradient(ellipse at 4% 87%, #030203 0%, rgba(3, 2, 3, 0.92) 18%, transparent 48%),
-		radial-gradient(ellipse at 92% 5%, #fff8fd 0%, rgba(255, 248, 253, 0.72) 12%, transparent 43%),
-		radial-gradient(ellipse at 13% 27%, #efade0 0%, rgba(239, 173, 224, 0.85) 16%, transparent 49%),
-		radial-gradient(ellipse at 82% 87%, #edb2db 0%, rgba(237, 178, 219, 0.75) 18%, transparent 52%),
-		radial-gradient(ellipse at 57% 100%, #fff9fd 0%, rgba(255, 249, 253, 0.42) 16%, transparent 42%),
-		#080608;
-}
-
-.background-mesh::after {
-	content: '';
-	position: absolute;
-	inset: 0;
-	background: var(--mesh-veil);
+	background-image:
+		radial-gradient(ellipse at 12% 20%, #fffafd 0%, rgba(255, 250, 253, 0.9) 18%, transparent 58%),
+		radial-gradient(ellipse at 77% 28%, #eea7d7 0%, rgba(238, 167, 215, 0.85) 22%, transparent 62%),
+		radial-gradient(ellipse at 55% 88%, #fffafd 0%, rgba(255, 250, 253, 0.85) 20%, transparent 58%),
+		radial-gradient(ellipse at 5% 90%, #e9a5ce 0%, rgba(233, 165, 206, 0.7) 18%, transparent 52%),
+		radial-gradient(ellipse at 95% 85%, rgba(27, 12, 24, 0.8) 0%, transparent 36%);
+	background-color: #f6d8ed;
 }
 
 .deferred-section {
@@ -151,14 +217,17 @@ section[id] {
 	scroll-margin-top: 0;
 }
 
-.intro-logo {
+.intro-logo,
+.dissolve-frame {
+	display: block;
 	width: 100%;
 	height: 100%;
 	object-fit: contain;
 }
 
 @media (max-width: 640px) {
-	.intro-logo {
+	.intro-logo,
+	.dissolve-frame {
 		/* Crop only the image's black margins; keep the complete wordmark. */
 		width: 160%;
 		max-width: none;
@@ -203,11 +272,21 @@ section[id] {
 
 @media (prefers-reduced-motion: no-preference) {
 	.mesh-clouds {
-		animation: mesh-drift 26s ease-in-out infinite alternate;
+		animation: mesh-drift 17s ease-in-out infinite;
 		animation-play-state: paused;
 	}
 
 	.site-background[data-mesh-moving] .mesh-clouds {
+		animation-play-state: running;
+	}
+
+	.dissolve-frame:last-child {
+		animation: cloud-volume 23s ease-in-out infinite;
+		animation-play-state: paused;
+		transform-origin: 50% 50%;
+	}
+
+	.site-background[data-mesh-moving] .dissolve-frame:last-child {
 		animation-play-state: running;
 	}
 
@@ -248,8 +327,17 @@ section[id] {
 }
 
 @keyframes mesh-drift {
-	from { transform: translate(-1.2%, -0.8%) rotate(-1deg) scale(1.02); }
-	to { transform: translate(1.2%, 0.8%) rotate(1deg) scale(1.04); }
+	0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1.03); }
+	25% { transform: translate(5%, -4%) rotate(2deg) scale(1.08, 1.02); }
+	50% { transform: translate(-1%, 5%) rotate(-1deg) scale(1.02, 1.1); }
+	75% { transform: translate(-5%, -2%) rotate(-2deg) scale(1.06, 1.04); }
+}
+
+@keyframes cloud-volume {
+	0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+	25% { transform: translate(-5%, 3.5%) rotate(-2deg) scale(1.04, 1.09); }
+	50% { transform: translate(2%, -4%) rotate(1deg) scale(1.1, 1.03); }
+	75% { transform: translate(5%, 2%) rotate(2deg) scale(1.02, 1.08); }
 }
 
 @keyframes intro-logo {
@@ -268,12 +356,21 @@ section[id] {
 }
 
 @media print {
-	.mesh-clouds { animation: none; }
+	.mesh-clouds, .dissolve-frame { animation: none; }
 	.intro-flash { display: none; }
 	[data-reveal] { opacity: 1; animation: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+	.background-dissolve {
+		display: none;
+	}
+
+	.site-background[data-logo-dissolve-ready] .mesh-clouds {
+		background-color: #f6d8ed;
+		opacity: 1;
+	}
+
 	.background-mesh {
 		transform: none;
 	}

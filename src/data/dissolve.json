@@ -1,0 +1,18 @@
+{
+	"width": 640,
+	"height": 360,
+	"frames": [
+		{ "step": 0, "progress": 0 },
+		{ "step": 4, "progress": 0.06 },
+		{ "step": 9, "progress": 0.13 },
+		{ "step": 17, "progress": 0.21 },
+		{ "step": 28, "progress": 0.3 },
+		{ "step": 41, "progress": 0.4 },
+		{ "step": 57, "progress": 0.5 },
+		{ "step": 77, "progress": 0.6 },
+		{ "step": 99, "progress": 0.7 },
+		{ "step": 124, "progress": 0.8 },
+		{ "step": 149, "progress": 0.9 },
+		{ "step": 178, "progress": 1 }
+	]
+}

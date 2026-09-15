@@ -2,6 +2,7 @@
 import Navbar from '../components/layout/Navbar.astro';
 import Footer from '../components/layout/Footer.astro';
 import '../styles/global.css';
+import dissolve from '../data/dissolve.json';
 
 interface Props {
 	title?: string;
@@ -53,6 +54,19 @@ const {
 					fetchpriority="high"
 					decoding="async"
 				/>
+			</div>
+			<div class="background-dissolve">
+				{dissolve.frames.map((_, index) => (
+					<img
+						class="dissolve-frame"
+						data-dissolve-src={`/background/logo-dissolve-${index}.webp`}
+						alt=""
+						width={dissolve.width}
+						height={dissolve.height}
+						decoding="async"
+						fetchpriority="low"
+					/>
+				))}
 			</div>
 			<div class="background-mesh">
 				<div class="mesh-clouds"></div>
