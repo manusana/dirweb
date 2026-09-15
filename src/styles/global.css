@@ -26,6 +26,7 @@
 	--button-hover: #292524;
 	--button-text: #f4f0e8;
 	--background-overlay: rgba(244, 240, 232, 0.82);
+	--mesh-veil: rgba(255, 244, 251, 0.76);
 	color-scheme: light;
 }
 
@@ -35,14 +36,15 @@
 	--surface: rgba(244, 240, 232, 0.08);
 	--surface-strong: rgba(244, 240, 232, 0.13);
 	--text: #f8f5ee;
-	--muted: #c7beb0;
-	--muted-soft: #a89f92;
+	--muted: #f1eaf0;
+	--muted-soft: #e9e0e7;
 	--border: rgba(248, 245, 238, 0.12);
 	--border-strong: rgba(248, 245, 238, 0.22);
 	--button-bg: #f8f5ee;
 	--button-hover: #e8dfd1;
 	--button-text: #11100e;
 	--background-overlay: rgba(17, 16, 14, 0.6);
+	--mesh-veil: rgba(5, 3, 5, 0.48);
 	color-scheme: dark;
 }
 
@@ -62,12 +64,20 @@ body {
 }
 
 .site-background {
+	--mesh-progress: 0;
 	position: fixed;
 	inset: 0;
-	z-index: -1;
+	/* Keep the image stable as mobile browser controls expand or collapse. */
+	height: 100lvh;
+	z-index: 0;
 	pointer-events: none;
-	background: #000 url('/sixfilms-background.jpg') center / contain no-repeat;
+	background: #000;
 	contain: strict;
+}
+
+.site-content {
+	position: relative;
+	z-index: 1;
 }
 
 .site-background::after {
@@ -76,6 +86,47 @@ body {
 	inset: 0;
 	background: var(--background-overlay);
 	transition: background-color 180ms ease;
+}
+
+/* Preserve the previous readable background when JavaScript is unavailable. */
+.site-background[data-mesh-ready]::after {
+	display: none;
+}
+
+.background-brand,
+.background-mesh {
+	position: absolute;
+	inset: 0;
+}
+
+.background-brand {
+	opacity: calc(1 - var(--mesh-progress));
+}
+
+.background-mesh {
+	opacity: var(--mesh-progress);
+	transform: translateY(calc((1 - var(--mesh-progress)) * 12px)) scale(calc(1.04 - var(--mesh-progress) * 0.04));
+}
+
+.mesh-clouds {
+	position: absolute;
+	inset: -8%;
+	/* Paint the gradients once; gently move their layer without animating blur or colors. */
+	background:
+		radial-gradient(ellipse at 49% 52%, rgba(3, 2, 3, 0.98) 0%, rgba(3, 2, 3, 0.8) 16%, transparent 52%),
+		radial-gradient(ellipse at 4% 87%, #030203 0%, rgba(3, 2, 3, 0.92) 18%, transparent 48%),
+		radial-gradient(ellipse at 92% 5%, #fff8fd 0%, rgba(255, 248, 253, 0.72) 12%, transparent 43%),
+		radial-gradient(ellipse at 13% 27%, #efade0 0%, rgba(239, 173, 224, 0.85) 16%, transparent 49%),
+		radial-gradient(ellipse at 82% 87%, #edb2db 0%, rgba(237, 178, 219, 0.75) 18%, transparent 52%),
+		radial-gradient(ellipse at 57% 100%, #fff9fd 0%, rgba(255, 249, 253, 0.42) 16%, transparent 42%),
+		#080608;
+}
+
+.background-mesh::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: var(--mesh-veil);
 }
 
 .deferred-section {
@@ -97,8 +148,6 @@ section[id] {
 	height: 100svh;
 	min-height: 28rem;
 	overflow: hidden;
-	background: #000;
-	color: #f8f5ee;
 	scroll-margin-top: 0;
 }
 
@@ -120,6 +169,7 @@ section[id] {
 .intro-flash {
 	position: absolute;
 	inset: 0;
+	z-index: 1;
 	pointer-events: none;
 	background: #fff5fc;
 	opacity: 0;
@@ -139,7 +189,7 @@ section[id] {
 	font-size: 0.6875rem;
 	letter-spacing: 0.16em;
 	text-transform: uppercase;
-	color: #d9c9d5;
+	color: #f4e8f0;
 }
 
 .intro-cue:hover {
@@ -152,20 +202,29 @@ section[id] {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-	.intro[data-intro="loading"] .intro-logo,
-	.intro[data-intro="loading"] .intro-cue {
+	.mesh-clouds {
+		animation: mesh-drift 26s ease-in-out infinite alternate;
+		animation-play-state: paused;
+	}
+
+	.site-background[data-mesh-moving] .mesh-clouds {
+		animation-play-state: running;
+	}
+
+	:root[data-intro="loading"] .intro-logo,
+	:root[data-intro="loading"] .intro-cue {
 		opacity: 0;
 	}
 
-	.intro[data-intro="playing"] .intro-flash {
+	:root[data-intro="playing"] .intro-flash {
 		animation: intro-flash 240ms ease-out;
 	}
 
-	.intro[data-intro="playing"] .intro-logo {
+	:root[data-intro="playing"] .intro-logo {
 		animation: intro-logo 800ms 240ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
 	}
 
-	.intro[data-intro="playing"] .intro-cue {
+	:root[data-intro="playing"] .intro-cue {
 		animation: intro-cue 500ms 900ms ease-out backwards;
 	}
 
@@ -188,6 +247,11 @@ section[id] {
 	20% { opacity: 0.72; }
 }
 
+@keyframes mesh-drift {
+	from { transform: translate(-1.2%, -0.8%) rotate(-1deg) scale(1.02); }
+	to { transform: translate(1.2%, 0.8%) rotate(1deg) scale(1.04); }
+}
+
 @keyframes intro-logo {
 	from { opacity: 0; transform: scale(0.96) translateY(12px); }
 	to { opacity: 1; transform: none; }
@@ -204,11 +268,16 @@ section[id] {
 }
 
 @media print {
+	.mesh-clouds { animation: none; }
 	.intro-flash { display: none; }
 	[data-reveal] { opacity: 1; animation: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+	.background-mesh {
+		transform: none;
+	}
+
 	html {
 		scroll-behavior: auto;
 	}

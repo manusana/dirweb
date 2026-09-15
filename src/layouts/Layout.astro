@@ -41,8 +41,25 @@ const {
 		<title>{title}</title>
 	</head>
 	<body class="min-h-screen bg-[var(--page-bg)] text-[var(--text)] antialiased selection:bg-[var(--text)] selection:text-[var(--button-text)]">
-		<div class="site-background" aria-hidden="true"></div>
-		<div class="min-h-screen">
+		<div class="site-background" aria-hidden="true">
+			<div class="background-brand">
+				<img
+					class="intro-logo"
+					src="/sixfilms-background.jpg"
+					alt=""
+					width="1920"
+					height="1080"
+					loading="eager"
+					fetchpriority="high"
+					decoding="async"
+				/>
+			</div>
+			<div class="background-mesh">
+				<div class="mesh-clouds"></div>
+			</div>
+			<div class="intro-flash"></div>
+		</div>
+		<div class="site-content min-h-screen">
 			<Navbar />
 			<main id="contenido">
 				<slot />
@@ -51,3 +68,7 @@ const {
 		</div>
 	</body>
 </html>
+
+<script>
+	import '../scripts/background';
+</script>
