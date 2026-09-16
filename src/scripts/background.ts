@@ -1,10 +1,12 @@
 import dissolve from '../data/dissolve.json';
+import type { DissolveRenderer } from './dissolve-renderer';
 
 function initBackground() {
 	const background = document.querySelector<HTMLElement>('.site-background');
 	const intro = document.querySelector<HTMLElement>('.intro');
 	const logo = document.querySelector<HTMLImageElement>('.intro-logo');
 	const textures = Array.from(document.querySelectorAll<HTMLImageElement>('.dissolve-frame'));
+	const canvas = document.querySelector<HTMLCanvasElement>('.dissolve-canvas');
 	if (!background || !intro || !logo || !textures.length) return;
 
 	const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -21,6 +23,15 @@ function initBackground() {
 	let dissolveReady = false;
 	let textureTask: Promise<void> | undefined;
 	let expansion = { x: 1, y: 1 };
+	let renderer: DissolveRenderer | undefined;
+	let gpuEnabled = false;
+	const appliedStyles = new Map<string, string>();
+
+	function writeStyle(property: string, value: string) {
+		if (appliedStyles.get(property) === value) return;
+		background!.style.setProperty(property, value);
+		appliedStyles.set(property, value);
+	}
 
 	function smooth(start: number, end: number, value: number) {
 		const t = Math.max(0, Math.min(1, (value - start) / (end - start)));
@@ -48,9 +59,11 @@ function initBackground() {
 		if (Math.abs(target - position) < 0.0003) position = target;
 		const progress = position;
 		// A slow connection must not swap the visual treatment halfway through a scroll.
-		if (texturesLoaded && !dissolveReady && progress === 0 && !motion.matches) {
+		if (texturesLoaded && progress === 0 && !motion.matches && (!dissolveReady || gpuEnabled !== Boolean(renderer))) {
 			dissolveReady = true;
+			gpuEnabled = Boolean(renderer);
 			background!.dataset.logoDissolveReady = '';
+			background!.dataset.dissolveRenderer = gpuEnabled ? 'gpu' : 'crossfade';
 			previous = -1;
 		}
 		if (progress === previous) return;
@@ -59,20 +72,23 @@ function initBackground() {
 		const spread = smooth(0.16, 0.66, progress);
 		const mesh = detailed ? smooth(0.55, 1, progress) : smooth(0, 1, progress);
 		const brand = detailed ? 1 - smooth(0, 0.14, progress) : 1 - mesh;
-		const style = background!.style;
-		style.setProperty('--brand-opacity', brand.toFixed(4));
-		style.setProperty('--dissolve-opacity', detailed ? smooth(0, 0.14, progress).toFixed(4) : '0');
-		style.setProperty('--dissolve-scale-x', (1 + (expansion.x - 1) * spread).toFixed(4));
-		style.setProperty('--dissolve-scale-y', (1 + (expansion.y - 1) * spread).toFixed(4));
-		style.setProperty('--mesh-progress', mesh.toFixed(4));
+		writeStyle('--brand-opacity', brand.toFixed(4));
+		writeStyle('--dissolve-opacity', detailed ? smooth(0, 0.14, progress).toFixed(4) : '0');
+		writeStyle('--dissolve-scale-x', (1 + (expansion.x - 1) * spread).toFixed(4));
+		writeStyle('--dissolve-scale-y', (1 + (expansion.y - 1) * spread).toFixed(4));
+		writeStyle('--mesh-progress', mesh.toFixed(4));
+		writeStyle('--cloud-motion', smooth(0.76, 1, progress).toFixed(4));
 
-		// Blend only the two adjacent, already decoded textures. All fluid simulation
-		// and optical softness were baked offline; scrolling never touches pixels.
+		// Follow the baked flow field continuously. The decoded images remain the
+		// fallback, and the final still takes over when GPU rendering has finished.
 		let stage = 0;
 		while (stage < stops.length - 2 && progress > stops[stage + 1]) stage++;
 		const blend = (progress - stops[stage]) / (stops[stage + 1] - stops[stage]);
+		const gpuActive = detailed && gpuEnabled && progress > 0 && progress < 1;
+		if (canvas && canvas.hasAttribute('data-active') !== gpuActive) canvas.toggleAttribute('data-active', gpuActive);
+		if (gpuActive) renderer!.draw(stage, blend);
 		for (let index = 0; index < textures.length; index++) {
-			const weight = detailed && progress > 0
+			const weight = detailed && progress > 0 && !gpuActive
 				? index === stage ? 1 - blend : index === stage + 1 ? blend : 0
 				: 0;
 			if (Math.abs(weight - weights[index]) < 0.0001) continue;
@@ -123,9 +139,17 @@ function initBackground() {
 			}));
 			if (disposed) return;
 			texturesLoaded = true;
+			if (canvas && !motion.matches) {
+				const { createDissolveRenderer } = await import('./dissolve-renderer');
+				const candidate = await createDissolveRenderer(canvas, textures);
+				if (disposed || motion.matches) candidate?.dispose();
+				else renderer = candidate;
+			}
+			if (disposed) return;
 			resize();
 		} catch {
 			// Keep the existing lightweight gradient if an asset cannot be decoded.
+			if (texturesLoaded && !disposed) resize();
 		} finally {
 			textureTask = undefined;
 		}
@@ -138,6 +162,16 @@ function initBackground() {
 		queue();
 	}
 
+	function contextLost(event: Event) {
+		event.preventDefault();
+		renderer?.dispose();
+		renderer = undefined;
+		gpuEnabled = false;
+		background!.dataset.dissolveRenderer = 'crossfade';
+		previous = -1;
+		queue();
+	}
+
 	resize();
 	background.dataset.meshReady = '';
 	if (!motion.matches) textureTask = prepareTextures();
@@ -146,6 +180,7 @@ function initBackground() {
 	window.addEventListener('pageshow', refresh);
 	motion.addEventListener('change', refresh);
 	document.addEventListener('visibilitychange', syncMotion);
+	canvas?.addEventListener('webglcontextlost', contextLost);
 
 	if (import.meta.hot) {
 		import.meta.hot.dispose(() => {
@@ -156,16 +191,20 @@ function initBackground() {
 			window.removeEventListener('pageshow', refresh);
 			motion.removeEventListener('change', refresh);
 			document.removeEventListener('visibilitychange', syncMotion);
+			canvas?.removeEventListener('webglcontextlost', contextLost);
+			canvas?.removeAttribute('data-active');
+			renderer?.dispose();
 			delete background.dataset.meshReady;
 			delete background.dataset.meshPhase;
 			delete background.dataset.logoDissolveReady;
+			delete background.dataset.dissolveRenderer;
 			delete document.documentElement.dataset.cloudTone;
 			background.removeAttribute('data-mesh-moving');
 			for (const texture of textures) {
 				texture.style.removeProperty('opacity');
 				texture.removeAttribute('data-active');
 			}
-			for (const property of ['--mesh-progress', '--brand-opacity', '--dissolve-opacity', '--dissolve-scale-x', '--dissolve-scale-y']) {
+			for (const property of ['--mesh-progress', '--brand-opacity', '--dissolve-opacity', '--dissolve-scale-x', '--dissolve-scale-y', '--cloud-motion']) {
 				background.style.removeProperty(property);
 			}
 		});

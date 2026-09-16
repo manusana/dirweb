@@ -1,6 +1,7 @@
 {
 	"width": 640,
 	"height": 360,
+	"flow": { "url": "/background/logo-flow.webp", "range": 6 },
 	"frames": [
 		{ "step": 0, "progress": 0 },
 		{ "step": 4, "progress": 0.06 },

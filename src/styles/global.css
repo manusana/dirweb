@@ -67,6 +67,7 @@ body {
 	--dissolve-opacity: 0;
 	--dissolve-scale-x: 1;
 	--dissolve-scale-y: 1;
+	--cloud-motion: 0;
 	position: fixed;
 	inset: 0;
 	/* Keep the image stable as mobile browser controls expand or collapse. */
@@ -146,15 +147,21 @@ body {
 	transform: scale(var(--dissolve-scale-x), var(--dissolve-scale-y));
 }
 
-.dissolve-frame {
+.dissolve-frame,
+.dissolve-canvas {
 	position: absolute;
 	inset: 0;
 	opacity: 0;
 	visibility: hidden;
 }
 
-.dissolve-frame[data-active] {
+.dissolve-frame[data-active],
+.dissolve-canvas[data-active] {
 	visibility: visible;
+}
+
+.dissolve-canvas {
+	opacity: 1;
 }
 
 .site-background[data-mesh-phase="mesh"] .background-brand {
@@ -218,7 +225,8 @@ section[id] {
 }
 
 .intro-logo,
-.dissolve-frame {
+.dissolve-frame,
+.dissolve-canvas {
 	display: block;
 	width: 100%;
 	height: 100%;
@@ -227,7 +235,8 @@ section[id] {
 
 @media (max-width: 640px) {
 	.intro-logo,
-	.dissolve-frame {
+	.dissolve-frame,
+	.dissolve-canvas {
 		/* Crop only the image's black margins; keep the complete wordmark. */
 		width: 160%;
 		max-width: none;
@@ -280,13 +289,15 @@ section[id] {
 		animation-play-state: running;
 	}
 
-	.dissolve-frame:last-child {
+	.dissolve-frame:last-child,
+	.dissolve-canvas {
 		animation: cloud-volume 23s ease-in-out infinite;
 		animation-play-state: paused;
 		transform-origin: 50% 50%;
 	}
 
-	.site-background[data-mesh-moving] .dissolve-frame:last-child {
+	.site-background[data-mesh-moving] .dissolve-frame:last-child,
+	.site-background[data-mesh-moving] .dissolve-canvas {
 		animation-play-state: running;
 	}
 
@@ -335,9 +346,18 @@ section[id] {
 
 @keyframes cloud-volume {
 	0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
-	25% { transform: translate(-5%, 3.5%) rotate(-2deg) scale(1.04, 1.09); }
-	50% { transform: translate(2%, -4%) rotate(1deg) scale(1.1, 1.03); }
-	75% { transform: translate(5%, 2%) rotate(2deg) scale(1.02, 1.08); }
+	25% {
+		transform: translate(calc(-5% * var(--cloud-motion)), calc(3.5% * var(--cloud-motion)))
+			rotate(calc(-2deg * var(--cloud-motion))) scale(calc(1 + 0.04 * var(--cloud-motion)), calc(1 + 0.09 * var(--cloud-motion)));
+	}
+	50% {
+		transform: translate(calc(2% * var(--cloud-motion)), calc(-4% * var(--cloud-motion)))
+			rotate(calc(1deg * var(--cloud-motion))) scale(calc(1 + 0.1 * var(--cloud-motion)), calc(1 + 0.03 * var(--cloud-motion)));
+	}
+	75% {
+		transform: translate(calc(5% * var(--cloud-motion)), calc(2% * var(--cloud-motion)))
+			rotate(calc(2deg * var(--cloud-motion))) scale(calc(1 + 0.02 * var(--cloud-motion)), calc(1 + 0.08 * var(--cloud-motion)));
+	}
 }
 
 @keyframes intro-logo {
@@ -356,7 +376,7 @@ section[id] {
 }
 
 @media print {
-	.mesh-clouds, .dissolve-frame { animation: none; }
+	.mesh-clouds, .dissolve-frame, .dissolve-canvas { animation: none; }
 	.intro-flash { display: none; }
 	[data-reveal] { opacity: 1; animation: none; }
 }

@@ -1,6 +1,7 @@
 // Offline fluid advection of the real wordmark. Run with:
 // node scripts/generate-logo-dissolve.mjs
-// Only the compressed results are shipped: no simulation runs in the browser.
+// Only the compressed results and a small velocity map are shipped.
+// Use --flow-only to rebuild the map without regenerating the cloud textures.
 import sharp from 'sharp';
 import { mkdir, readFile } from 'node:fs/promises';
 
@@ -50,6 +51,18 @@ for (let y = 0; y < height; y++) {
 		flow[p * 2 + 1] = -(field(x + 1, y) - field(x - 1, y)) * 1.3;
 	}
 }
+
+// The renderer follows this same velocity field between the baked frames.
+const flowPixels = Buffer.alloc(width * height * 3);
+for (let p = 0; p < width * height; p++) {
+	flowPixels[p * 3] = Math.round(clamp(128 + flow[p * 2] * 127 / config.flow.range, 0, 255));
+	flowPixels[p * 3 + 1] = Math.round(clamp(128 + flow[p * 2 + 1] * 127 / config.flow.range, 0, 255));
+}
+const flowResult = await sharp(flowPixels, { raw: { width, height, channels: 3 } })
+	.resize(width / 2, height / 2).webp({ lossless: true, effort: 6 })
+	.toFile(new URL('logo-flow.webp', output).pathname);
+console.log(`Velocity map: ${(flowResult.size / 1024).toFixed(1)} KB`);
+if (process.argv.includes('--flow-only')) process.exit(0);
 
 const captures = config.frames.map(({ step }) => step);
 let frame = 0, totalBytes = 0;
