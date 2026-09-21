@@ -77,7 +77,17 @@ body {
 
 /* Content scrolls directly over the fixed image without dimming it. */
 .portfolio-content {
+	/* Opaque component surfaces keep the wordmark out of captions and inputs. */
+	--surface: var(--page-bg);
+	--surface-strong: var(--page-soft);
 	position: relative;
+}
+
+.reading-panel {
+	padding: clamp(1.25rem, 2.5vw, 2rem);
+	border: 1px solid var(--border);
+	border-radius: 1.5rem;
+	background: var(--surface);
 }
 
 .deferred-section {
@@ -86,6 +96,7 @@ body {
 }
 
 .horizontal-rail {
+	padding-top: 0.5rem;
 	-webkit-overflow-scrolling: touch;
 	overscroll-behavior-x: contain;
 }
@@ -154,15 +165,56 @@ section[id] {
 		animation: reveal-in 600ms var(--reveal-delay, 0ms) cubic-bezier(0.22, 1, 0.36, 1) backwards;
 	}
 
+	[data-reveal="visible"][data-reveal-kind="card"] {
+		animation-name: reveal-card;
+		animation-duration: 650ms;
+	}
+
+	.interactive-card {
+		transition: transform 240ms ease, background-color 180ms ease;
+	}
+
+	:is([data-video-prev], [data-video-next], .intro-cue) svg {
+		transition: transform 200ms ease;
+	}
+
+	.intro-cue svg {
+		animation: cue-nudge 1600ms ease-in-out 2;
+	}
+
 	[data-reveal]:focus-within {
 		opacity: 1;
 		animation: none;
 	}
 }
 
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+	.interactive-card:hover {
+		transform: translateY(-4px);
+	}
+
+	[data-video-next]:enabled:hover svg {
+		transform: translateX(3px);
+	}
+
+	[data-video-prev]:enabled:hover svg {
+		transform: translateX(-3px);
+	}
+}
+
 @keyframes reveal-in {
 	from { opacity: 0; transform: translateY(14px); }
 	to { opacity: 1; transform: none; }
+}
+
+@keyframes reveal-card {
+	from { opacity: 0; transform: translateY(18px) scale(0.985); }
+	to { opacity: 1; transform: none; }
+}
+
+@keyframes cue-nudge {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(5px); }
 }
 
 @media print {

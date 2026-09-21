@@ -58,10 +58,10 @@ const products = [
 	<Intro />
 	<div class="portfolio-content">
 		<section id="presentacion" class="mx-auto flex w-full max-w-7xl flex-col justify-center px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
-			<div data-reveal class="mb-8 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-				<div data-reveal>
+			<div data-reveal class="reading-panel mb-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+				<div>
 					<p class="mb-6 max-w-sm font-mono text-sm text-[var(--muted-soft)]">#TUFILMMAKERFAVORITO</p>
-					<h1 class="max-w-5xl text-balance text-6xl font-semibold leading-none text-[var(--text)] sm:text-8xl lg:text-[9rem]">
+					<h1 class="max-w-5xl text-balance text-[clamp(2rem,11vw,9rem)] font-semibold leading-none text-[var(--text)]">
 						dir.sixFilms
 					</h1>
 				</div>
@@ -87,8 +87,8 @@ const products = [
 
 		<section id="obras" class="deferred-section border-t border-[color:var(--border)] py-20 sm:py-28">
 			<div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-				<div data-reveal class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-					<div data-reveal>
+				<div data-reveal class="reading-panel flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+					<div>
 						<p class="font-mono text-sm text-[var(--muted-soft)]">Obras seleccionadas</p>
 						<h2 class="mt-3 text-4xl font-medium text-[var(--text)] sm:text-6xl">VIDEO</h2>
 					</div>
@@ -100,12 +100,12 @@ const products = [
 				<div id="videoclips-rail" class="horizontal-rail mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="region" aria-label="Videoclips seleccionados">
 					{
 						videos.map((video) => (
-							<article data-reveal class="group w-[82vw] shrink-0 snap-start sm:w-[34rem]">
+							<article data-reveal data-reveal-kind="card" class="group w-[82vw] shrink-0 snap-start sm:w-[34rem]">
 								<a
 									href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
 									target="_blank"
 									rel="noopener noreferrer"
-									class="block overflow-hidden rounded-[2rem] bg-[var(--surface)] p-2 ring-1 ring-[color:var(--border)] transition-colors duration-200 hover:bg-[var(--surface-strong)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--text)]"
+									class="interactive-card block overflow-hidden rounded-[2rem] bg-[var(--surface)] p-2 ring-1 ring-[color:var(--border)] transition-colors duration-200 hover:bg-[var(--surface-strong)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--text)]"
 									aria-label={`Ver ${video.title} de ${video.artist} en YouTube (se abre en una pestaña nueva)`}
 								>
 									<div class="relative aspect-video overflow-hidden rounded-[1.55rem] bg-black">
@@ -154,8 +154,8 @@ const products = [
 					</button>
 				</div>
 
-				<div data-reveal class="mt-16 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-					<div data-reveal>
+				<div data-reveal class="reading-panel mt-16 w-fit max-w-full flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+					<div>
 						<p class="font-mono text-sm text-[var(--muted-soft)]">Direccion visual</p>
 						<h2 id="portadas" class="mt-3 scroll-mt-24 text-4xl font-medium text-[var(--text)] sm:text-6xl">ARTWORKS</h2>
 					</div>
@@ -164,7 +164,7 @@ const products = [
 				<div class="horizontal-rail mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 					{
 						covers.map((cover) => (
-							<figure data-reveal class="w-[72vw] shrink-0 snap-start rounded-[2rem] bg-[var(--surface)] p-2 ring-1 ring-[color:var(--border)] sm:w-[24rem]">
+							<figure data-reveal data-reveal-kind="card" class="w-[72vw] shrink-0 snap-start rounded-[2rem] bg-[var(--surface)] p-2 ring-1 ring-[color:var(--border)] sm:w-[24rem]">
 								<div class="aspect-square overflow-hidden rounded-[1.55rem] bg-black">
 									<Image
 										src={cover.image}
@@ -191,13 +191,13 @@ const products = [
 
 		<section id="merchandising" class="deferred-section border-t border-[color:var(--border)] py-20 sm:py-28">
 			<div class="mx-auto grid w-full max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
-				<div data-reveal>
+				<div data-reveal class="reading-panel self-start">
 					<h2 class="mt-3 text-4xl font-medium text-[var(--text)] sm:text-6xl">MERCHAN</h2>
 				</div>
 				<div class="grid gap-3 sm:grid-cols-3">
 					{
 						products.map((product) => (
-							<article data-reveal class="rounded-[2rem] bg-[var(--surface)] p-4 ring-1 ring-[color:var(--border)]">
+							<article data-reveal data-reveal-kind="card" class="rounded-[2rem] bg-[var(--surface)] p-4 ring-1 ring-[color:var(--border)]">
 								<div class="aspect-[4/5] rounded-[1.5rem] bg-[var(--surface)]"></div>
 								<h3 class="mt-4 text-lg font-medium text-[var(--text)]">{product.name}</h3>
 								<p class="mt-1 text-sm text-[var(--muted-soft)]">{product.price}</p>
@@ -213,7 +213,7 @@ const products = [
 
 		<section id="contacto" class="deferred-section border-t border-[color:var(--border)] py-20 sm:py-28">
 			<div class="mx-auto grid w-full max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1fr] lg:px-8">
-				<div data-reveal>
+				<div data-reveal class="reading-panel self-start">
 					<p class="font-mono text-sm text-[var(--muted-soft)]">Contacto</p>
 					<h2 class="mt-3 text-4xl font-medium text-[var(--text)] sm:text-6xl">Nuevo trabajo</h2>
 					<p class="mt-6 max-w-md text-pretty text-lg leading-8 text-[var(--muted)]">
