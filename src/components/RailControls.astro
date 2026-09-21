@@ -1,0 +1,22 @@
+---
+interface Props {
+	railId: string;
+	itemsLabel: string;
+}
+
+const { railId, itemsLabel } = Astro.props;
+const buttonClass = 'inline-flex size-12 items-center justify-center rounded-full border border-[color:var(--border-strong)] bg-[var(--button-bg)] text-[var(--button-text)] transition-colors hover:bg-[var(--button-hover)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--text)] disabled:cursor-default disabled:opacity-35';
+---
+
+<div data-rail-controls={railId} hidden class="mt-2 flex items-center justify-center gap-3 [&[hidden]]:hidden" role="group" aria-label={`Navegar por ${itemsLabel}`}>
+	<button type="button" data-rail-prev aria-controls={railId} aria-label={`Ver ${itemsLabel} anteriores`} disabled class={buttonClass}>
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6" /></svg>
+	</button>
+	<button type="button" data-rail-next aria-controls={railId} aria-label={`Ver siguientes ${itemsLabel}`} disabled class={buttonClass}>
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+	</button>
+</div>
+
+<script>
+	import '../scripts/rails';
+</script>

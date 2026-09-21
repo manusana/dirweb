@@ -5,12 +5,12 @@ import profilePhoto from '../../assets/profile/dir-sixfilms-profile.jpeg';
 const navItems = [
 	{ label: 'Inicio', href: '#inicio' },
 	{ label: 'Obras', href: '#obras' },
-	{ label: 'Merch', href: '#merchandising' },
 	{ label: 'Contacto', href: '#contacto' },
 ];
 ---
 
 <header class="fixed inset-x-0 top-0 z-50 border-b border-[color:var(--border)] bg-[var(--page-bg)]/95">
+	<div class="page-progress" aria-hidden="true"><span class="page-progress-bar"></span></div>
 	<a
 		href="#contenido"
 		class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-[var(--button-bg)] focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-[var(--button-text)]"
@@ -88,4 +88,8 @@ const navItems = [
 	toggle?.addEventListener('click', () => {
 		setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
 	});
+</script>
+
+<script>
+	import '../../scripts/scroll-progress';
 </script>

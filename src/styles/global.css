@@ -75,6 +75,33 @@ body {
 	z-index: 1;
 }
 
+.page-progress {
+	position: absolute;
+	inset: 0 0 auto;
+	height: 3px;
+	pointer-events: none;
+}
+
+.page-progress-bar {
+	display: block;
+	height: 100%;
+	background: #efade0;
+	transform: scaleX(0);
+	transform-origin: left;
+}
+
+@supports (animation-timeline: scroll(root block)) {
+	.page-progress-bar {
+		animation: page-progress linear both;
+		animation-timeline: scroll(root block);
+	}
+}
+
+@keyframes page-progress {
+	from { transform: scaleX(0); }
+	to { transform: scaleX(1); }
+}
+
 /* Content scrolls directly over the fixed image without dimming it. */
 .portfolio-content {
 	/* Opaque component surfaces keep the wordmark out of captions and inputs. */
@@ -88,6 +115,28 @@ body {
 	border: 1px solid var(--border);
 	border-radius: 1.5rem;
 	background: var(--surface);
+}
+
+/* Leave the center of the fixed wordmark clear when the introduction is in view. */
+.presentation {
+	min-height: max(32rem, calc(100svh - 4rem));
+	padding-block: 4rem 3rem;
+	gap: 2rem;
+}
+
+.presentation-identity {
+	color: #f8f5ee;
+	text-shadow: 0 2px 12px #000, 0 1px 2px #000;
+}
+
+.presentation-focus {
+	position: absolute;
+	inset: -0.625rem;
+	width: calc(100% + 1.25rem);
+	height: calc(100% + 1.25rem);
+	color: #efade0;
+	opacity: 0;
+	pointer-events: none;
 }
 
 .deferred-section {
@@ -157,6 +206,41 @@ section[id] {
 
 /* Animate each block once as it enters; the background and scroll stay native. */
 @media (prefers-reduced-motion: no-preference) {
+	[data-camera-intro="pending"] :is(.presentation-photo, .presentation-copy, .presentation-cta) {
+		opacity: 0;
+	}
+
+	[data-camera-intro="pending"] .presentation-cta {
+		pointer-events: none;
+	}
+
+	[data-camera-intro="playing"] .presentation-focus {
+		animation: camera-focus 750ms ease-out both;
+	}
+
+	[data-camera-intro="playing"] .presentation-photo {
+		animation: camera-photo 400ms 150ms ease-out backwards;
+	}
+
+	[data-camera-intro="playing"] .presentation-copy {
+		animation: reveal-in 500ms 250ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+	}
+
+	[data-camera-intro="playing"] .presentation-cta {
+		animation: camera-cta 350ms 800ms ease-out backwards;
+	}
+
+	.presentation:focus-within :is(.presentation-photo, .presentation-copy, .presentation-cta) {
+		opacity: 1;
+		animation: none;
+		pointer-events: auto;
+	}
+
+	.presentation:focus-within .presentation-focus {
+		opacity: 0;
+		animation: none;
+	}
+
 	[data-reveal="pending"] {
 		opacity: 0;
 	}
@@ -174,7 +258,7 @@ section[id] {
 		transition: transform 240ms ease, background-color 180ms ease;
 	}
 
-	:is([data-video-prev], [data-video-next], .intro-cue) svg {
+	:is([data-rail-prev], [data-rail-next], .intro-cue) svg {
 		transition: transform 200ms ease;
 	}
 
@@ -193,11 +277,11 @@ section[id] {
 		transform: translateY(-4px);
 	}
 
-	[data-video-next]:enabled:hover svg {
+	[data-rail-next]:enabled:hover svg {
 		transform: translateX(3px);
 	}
 
-	[data-video-prev]:enabled:hover svg {
+	[data-rail-prev]:enabled:hover svg {
 		transform: translateX(-3px);
 	}
 }
@@ -208,7 +292,7 @@ section[id] {
 }
 
 @keyframes reveal-card {
-	from { opacity: 0; transform: translateY(18px) scale(0.985); }
+	from { opacity: 0; transform: translateY(18px); }
 	to { opacity: 1; transform: none; }
 }
 
@@ -217,11 +301,30 @@ section[id] {
 	50% { transform: translateY(5px); }
 }
 
+@keyframes camera-focus {
+	0% { opacity: 0; transform: scale(1.18); }
+	25% { opacity: 1; }
+	65% { opacity: 1; transform: scale(1); }
+	100% { opacity: 0; transform: scale(1); }
+}
+
+@keyframes camera-photo {
+	from { opacity: 0; transform: scale(0.97); }
+	to { opacity: 1; transform: none; }
+}
+
+@keyframes camera-cta {
+	from { opacity: 0; transform: translateY(8px); pointer-events: none; }
+	to { opacity: 1; transform: none; pointer-events: auto; }
+}
+
 @media print {
-	[data-reveal] {
+	[data-reveal],
+	.presentation :is(.presentation-photo, .presentation-copy, .presentation-cta) {
 		opacity: 1;
 		animation: none;
 	}
+	.presentation-focus { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
