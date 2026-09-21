@@ -8,13 +8,13 @@ function initReveals() {
 		for (const entry of entries) {
 			if (!entry.isIntersecting) continue;
 			const element = entry.target as HTMLElement;
-			element.style.setProperty('--reveal-delay', `${Math.min(order++, 3) * 55}ms`);
+			element.style.setProperty('--reveal-delay', `${Math.min(order++, 3) * 60}ms`);
 			element.dataset.reveal = 'visible';
 			observer.unobserve(element);
 			pending.delete(element);
 		}
 		if (!pending.size) disconnect();
-	}, { threshold: 0.08, rootMargin: '0px 0px -24px 0px' });
+	}, { threshold: 0.08, rootMargin: '0px 0px -16px 0px' });
 
 	function disconnect() {
 		observer.disconnect();

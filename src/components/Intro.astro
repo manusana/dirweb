@@ -6,31 +6,3 @@
 		</svg>
 	</a>
 </section>
-
-<script is:inline>
-	(() => {
-		const intro = document.querySelector('.intro');
-		const logo = document.querySelector('.site-background .intro-logo');
-		const state = document.documentElement;
-		const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-		const isAtStart = () => window.scrollY < 32 && (!location.hash || location.hash === '#inicio');
-		if (!intro || !logo || reducedMotion.matches || !isAtStart()) return;
-
-		// Wait for the existing image to decode; never block navigation or scrolling.
-		state.dataset.intro = 'loading';
-		logo.decode().then(() => {
-			if (reducedMotion.matches || !isAtStart()) {
-				delete state.dataset.intro;
-				return;
-			}
-			state.dataset.intro = 'playing';
-		}).catch(() => { delete state.dataset.intro; });
-
-		const finish = (event) => {
-			if (event.animationName !== 'intro-cue') return;
-			delete state.dataset.intro;
-			intro.removeEventListener('animationend', finish);
-		};
-		intro.addEventListener('animationend', finish);
-	})();
-</script>
