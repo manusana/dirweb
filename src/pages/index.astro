@@ -70,7 +70,7 @@ const covers = [
 					</svg>
 				</div>
 				<div class="presentation-copy min-w-0">
-					<p class="mb-3 font-mono text-[0.5625rem] tracking-[0.08em] text-[#e9e0e7] sm:text-xs">#TUFILMMAKERFAVORITO</p>
+					<p class="mb-3 font-sans text-[0.5625rem] tracking-[0.08em] text-[#e9e0e7] sm:text-xs">#TUFILMMAKERFAVORITO</p>
 					<h1 class="text-[clamp(2rem,6vw,4.5rem)] font-semibold leading-none tracking-tight">
 						dir.sixFilms
 					</h1>
@@ -79,7 +79,7 @@ const covers = [
 			<div class="presentation-cta flex w-full justify-center">
 				<a
 					href="#obras"
-					class="inline-flex h-12 shrink-0 items-center justify-center rounded-full bg-[var(--button-bg)] px-6 font-mono text-sm font-medium text-[var(--button-text)] transition duration-200 hover:scale-[1.03] hover:bg-[var(--button-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--text)] focus:ring-offset-2 focus:ring-offset-[var(--page-bg)] motion-reduce:hover:scale-100"
+					class="inline-flex h-12 shrink-0 items-center justify-center rounded-full bg-[var(--button-bg)] px-6 font-sans text-sm font-medium text-[var(--button-text)] transition duration-200 hover:scale-[1.03] hover:bg-[var(--button-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--text)] focus:ring-offset-2 focus:ring-offset-[var(--page-bg)] motion-reduce:hover:scale-100"
 				>
 					Ver obras
 				</a>
@@ -90,8 +90,8 @@ const covers = [
 			<div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
 				<div data-reveal class="reading-panel flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 					<div>
-						<p class="font-mono text-sm text-[var(--muted-soft)]">Obras seleccionadas</p>
-						<h2 class="mt-3 text-4xl font-medium text-[var(--text)] sm:text-6xl">VIDEO</h2>
+						<p class="font-sans text-sm text-[var(--muted-soft)]">Obras seleccionadas</p>
+						<h2 class="mt-3 text-4xl font-medium text-[var(--text)] sm:text-6xl">Video</h2>
 					</div>
 					<p class="max-w-md text-pretty text-[var(--muted)]">
 						Cada canción, una historia...
@@ -135,7 +135,7 @@ const covers = [
 											<h3 class="text-xl font-medium text-[var(--text)]">{video.title}</h3>
 											<p class="mt-1 text-sm text-[var(--muted-soft)]">{video.artist}</p>
 										</div>
-										<span class="shrink-0 rounded-full border border-[color:var(--border-strong)] px-3 py-1 font-mono text-xs text-[var(--muted)] transition-colors duration-200 group-hover:bg-[var(--button-bg)] group-hover:text-[var(--button-text)]">
+										<span class="shrink-0 rounded-full border border-[color:var(--border-strong)] px-3 py-1 font-sans text-xs text-[var(--muted)] transition-colors duration-200 group-hover:bg-[var(--button-bg)] group-hover:text-[var(--button-text)]">
 											YouTube ↗
 										</span>
 									</div>
@@ -149,8 +149,8 @@ const covers = [
 
 				<div data-reveal class="reading-panel mt-16 w-fit max-w-full flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
 					<div>
-						<p class="font-mono text-sm text-[var(--muted-soft)]">Direccion visual</p>
-						<h2 id="portadas" class="mt-3 scroll-mt-24 text-4xl font-medium text-[var(--text)] sm:text-6xl">ARTWORKS</h2>
+						<p class="font-sans text-sm text-[var(--muted-soft)]">Direccion visual</p>
+						<h2 id="portadas" class="mt-3 scroll-mt-24 text-4xl font-medium text-[var(--text)] sm:text-6xl">Artworks</h2>
 					</div>
 				</div>
 
@@ -186,7 +186,7 @@ const covers = [
 		<section id="contacto" class="deferred-section border-t border-[color:var(--border)] py-20 sm:py-28">
 			<div class="mx-auto grid w-full max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1fr] lg:px-8">
 				<div data-reveal class="reading-panel self-start">
-					<p class="font-mono text-sm text-[var(--muted-soft)]">Contacto</p>
+					<p class="font-sans text-sm text-[var(--muted-soft)]">Contacto</p>
 					<h2 class="mt-3 text-4xl font-medium text-[var(--text)] sm:text-6xl">Nuevo trabajo</h2>
 					<p class="mt-6 max-w-md text-pretty text-lg leading-8 text-[var(--muted)]">
 						Para videoclips, portadas, campanas visuales o lanzamientos completos.
@@ -197,7 +197,7 @@ const covers = [
 					<input class="h-12 rounded-full border border-[color:var(--border)] bg-[var(--surface)] px-5 text-[var(--text)] outline-none transition-colors placeholder:text-[var(--muted-soft)] focus:border-[color:var(--border-strong)]" type="text" name="name" placeholder="Nombre" />
 					<input class="h-12 rounded-full border border-[color:var(--border)] bg-[var(--surface)] px-5 text-[var(--text)] outline-none transition-colors placeholder:text-[var(--muted-soft)] focus:border-[color:var(--border-strong)]" type="email" name="email" placeholder="Email" />
 					<textarea class="min-h-36 rounded-[1.5rem] border border-[color:var(--border)] bg-[var(--surface)] px-5 py-4 text-[var(--text)] outline-none transition-colors placeholder:text-[var(--muted-soft)] focus:border-[color:var(--border-strong)]" name="message" placeholder="Cuéntame la idea"></textarea>
-					<button class="h-12 rounded-full bg-[var(--button-bg)] px-6 font-mono text-sm font-medium text-[var(--button-text)] transition duration-200 hover:scale-[1.02] hover:bg-[var(--button-hover)] motion-reduce:hover:scale-100" type="submit">
+					<button class="h-12 rounded-full bg-[var(--button-bg)] px-6 font-sans text-sm font-medium text-[var(--button-text)] transition duration-200 hover:scale-[1.02] hover:bg-[var(--button-hover)] motion-reduce:hover:scale-100" type="submit">
 						Enviar
 					</button>
 				</form>
